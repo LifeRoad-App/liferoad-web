@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!--
+    If you are serving your web app in a path other than the root, change the
+    href value below to reflect the base path you are serving from.
+
+    The path provided below has to start and end with a slash "/" in order for
+    it to work correctly.
+
+    For more details:
+    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
+
+    This is a placeholder for base href that will be replaced by the value of
+    the `--base-href` argument provided to `flutter build`.
+  -->
+  <base href="/liferoad-web/">
+
+  <meta charset="UTF-8">
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  <meta name="description" content="The game you play to unwind.">
+
+  <!-- iOS meta tags & icons -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="liferoad">
+  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="favicon.png"/>
+
+  <title>LifeRoad</title>
+  <link rel="manifest" href="manifest.json">
+
+  <!--
+    The app is a few megabytes of compiled Dart, so on a phone there is a real
+    gap between the page arriving and the first frame painting. Without
+    something on screen that gap reads as a broken link, so paint a splash
+    immediately and take it away once Flutter renders.
+  -->
+  <style>
+    html, body { margin: 0; padding: 0; height: 100%; background: #F3EFFA; }
+    #boot {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      background: #F3EFFA;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: #3D2A63;
+      transition: opacity 0.35s ease;
+      z-index: 9999;
+    }
+    #boot.gone { opacity: 0; pointer-events: none; }
+    #boot h1 { margin: 0; font-size: 1.6rem; font-weight: 600; letter-spacing: 0.01em; }
+    #boot p { margin: 0; font-size: 0.95rem; color: #6E5C93; }
+    #boot .ring {
+      width: 34px;
+      height: 34px;
+      border: 3px solid #D6C9EC;
+      border-top-color: #6E56A8;
+      border-radius: 50%;
+      animation: spin 0.9s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @media (prefers-reduced-motion: reduce) {
+      #boot .ring { animation-duration: 3s; }
+      #boot { transition: none; }
+    }
+  </style>
+</head>
+<body>
+  <div id="boot">
+    <h1>LifeRoad</h1>
+    <div class="ring"></div>
+    <p>Loading the garden…</p>
+  </div>
+  <script>
+    // Anyone who loaded an earlier build still has its service worker, which
+    // would keep serving them that build forever. Tear it down on arrival so a
+    // visitor who once got a bad load is not stuck with it.
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then(function (regs) {
+        regs.forEach(function (r) { r.unregister(); });
+      }).catch(function () {});
+      if (window.caches && caches.keys) {
+        caches.keys().then(function (keys) {
+          keys.forEach(function (k) { caches.delete(k); });
+        }).catch(function () {});
+      }
+    }
+
+    window.addEventListener('flutter-first-frame', function () {
+      var boot = document.getElementById('boot');
+      if (!boot) return;
+      boot.classList.add('gone');
+      setTimeout(function () { boot.remove(); }, 400);
+    });
+  </script>
+  <!--
+    You can customize the "flutter_bootstrap.js" script.
+    This is useful to provide a custom configuration to the Flutter loader
+    or to give the user feedback during the initialization process.
+
+    For more details:
+    * https://docs.flutter.dev/platform-integration/web/initialization
+  -->
+  <script src="flutter_bootstrap.js" async></script>
+</body>
+</html>
